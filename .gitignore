@@ -2,7 +2,8 @@ __pycache__
 .ipynb_chepoints
 .vscode
 Manuscript/Manuscript.*
-Cover_leter.docx
+Manuscript/*.bib
+Cover_Letter.docx
 IEEEtran_HOWTO.pdf
 IEEEtran.cls
 Plot_yita.py
