@@ -3,5 +3,6 @@ __pycache__
 .vscode
 /Manuscript
 Cover_leter
-IEEEtran_HOWTO
+IEEEtran_HOWTO.pdf
+IEEEtran.cls
 Plot_yita.py
