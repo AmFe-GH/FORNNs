@@ -1,4 +1,5 @@
-# Paper Replication Repository
+# Repository
+ :rocket: 
 
 This repository contains the code to replicate the results presented in the paper "Caputo Fractional Order Recurrent Neural Networks". 
 
