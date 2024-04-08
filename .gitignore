@@ -1,7 +1,7 @@
 __pycache__
 .ipynb_chepoints
 .vscode
-Manuscript/
+Manuscript/*
 !Manuscript/Figure/
 Manuscript/*.bib
 Cover_Letter.docx
