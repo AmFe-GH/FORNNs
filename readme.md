@@ -1,6 +1,8 @@
-# Repository
+# Repository 
  :rocket: 
-
+<p align="center">
+<img src="/Manuscript/Figure/figure1.PNG"/> 
+</p>
 This repository contains the code to replicate the results presented in the paper "Caputo Fractional Order Recurrent Neural Networks". 
 
 ## Files
