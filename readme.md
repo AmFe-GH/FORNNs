@@ -1,5 +1,9 @@
-# Repository 
- :rocket: 
+# Repository :rocket: 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) 
+![version](https://img.shields.io/badge/version-v1.3.0-blue) 
+![Dependency](https://img.shields.io/badge/dependency-PyTorch-orange)
+![Language](https://img.shields.io/badge/language-Python-blue)
+![Contributors](https://img.shields.io/badge/contributors-3-p)
 <p align="center">
 <img src="/Manuscript/Figure/figure1.PNG"/> 
 </p>
