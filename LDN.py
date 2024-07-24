@@ -18,7 +18,7 @@ width_step_pre = width_step/div
 N_step_pre = N_step*div
 test_step_pre = test_step*div
 path = './trained_model/init_param_overflow.pth'
-
+os.makedirs('./trained_model', exist_ok=True)
 if train_state == 1:
     assert os.path.exists(path)
     [A, B, Theta, optimizer_param, min_loss] = torch.load(path)
@@ -61,7 +61,7 @@ assert torch.isnan(real_x_pre).any() == False
 assert real_x_pre.requires_grad == False
 loss_history = []
 epsilon_history = []
-pbar = tqdm(range(1000))
+pbar = tqdm(range(10000))
 for epoch_num, _ in enumerate(pbar):
     train_data = real_x_pre + torch.rand_like(real_x_pre)*(real_t_pre.max())
     train_labels = X_rightfunc(train_data)

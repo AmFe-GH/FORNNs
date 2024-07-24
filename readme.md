@@ -22,7 +22,8 @@ This repository contains the code to replicate the results presented in the pape
 To replicate the results:
 
 1. Clone this repository to your local machine.
-2. Open and run `FORNN_ABTheta.ipynb` in a Jupyter Notebook environment, following the instructions provided in the notebook.
+2. Run LDN.py to get `init_param_overflow.pth`
+3. Open and run `FORNN_ABTheta.ipynb` in a Jupyter Notebook environment, following the instructions provided in the notebook.
 
 ## Citation
 
