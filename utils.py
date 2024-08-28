@@ -1,3 +1,4 @@
+import matplotlib.ticker as ticker
 import numpy as np
 from scipy.special import gamma
 import matplotlib.pyplot as plt
@@ -33,7 +34,7 @@ class sche_lr:
         return float(new_lr)
 
 
-def X_rightfunc(x):
+def X_rightfunc_Lorenz(x):
     if len(x.shape) == 1:
         x = x.unsqueeze(0)
     elif len(x.shape) != 2:
@@ -51,9 +52,40 @@ def X_rightfunc(x):
     return result
 
 
-def X_rightfunc_numpy(x):
+def X_rightfunc_Lorenz_numpy(x):
     val = np.array([[10*(x[0, 1]-x[0, 0]), 28*x[0, 0]-x[0, 1] -
                    x[0, 0]*x[0, 2], x[0, 0]*x[0, 1]-8/3*x[0, 2]]])
+    return val
+
+
+def X_rightfunc_Chua(x):
+    def g_function_of_Chua(x0):
+        val = -0.1 * x0 + 1/2 * (-3.9)*(torch.abs(x0+1)-torch.abs(x0-1))
+        return val
+    if len(x.shape) == 1:
+        x = x.unsqueeze(0)
+    elif len(x.shape) != 2:
+        raise ValueError
+    result = torch.zeros_like(x, requires_grad=False)
+
+    result[:, 0] = 10*(0.7*(x[:, 1] - x[:, 0])-g_function_of_Chua(x[:, 0]))
+    result[:, 1] = 0.5*(0.7*(x[:, 0]-x[:, 1])+x[:, 2])
+    result[:, 2] = -7*x[:, 1]
+
+    assert len(result.shape) == 2
+    return result
+
+
+def X_rightfunc_Chua_numpy(x):
+    #
+    def g_function_of_Chua(x0):
+        val = -0.1 * x0 + 1/2 * (-3.9)*(np.abs(x0+1)-np.abs(x0-1))
+
+        return val
+
+    val = np.array([[10*(0.7*(x[0, 1] - x[0, 0])-g_function_of_Chua(x[0, 0])),
+                    0.5*(0.7*(x[0, 0]-x[0, 1])+x[0, 2]),
+                    -7*x[0, 1]]])
     return val
 
 
@@ -127,9 +159,13 @@ def draw3d_train_test(real_x, pre_x, real_t, N_step, test_step, fig_path=None):
     # Adjust layout to prevent overlap
     plt.tight_layout()
 
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+
     # Save the figure if fig_path is provided
     if fig_path:
-        plt.savefig(fig_path + "Lorenz-1D.eps", format="eps")
+        plt.savefig(fig_path + "1D.test.eps", format="eps")
+        plt.savefig(fig_path + "1D.test.png")
 
     plt.show()
 
@@ -163,8 +199,11 @@ def draw3d_train_test(real_x, pre_x, real_t, N_step, test_step, fig_path=None):
     plt.ylabel("z")
     # plt.suptitle("Real data from LORENZE system - 2D")
     plt.tight_layout()
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
     if fig_path:
-        plt.savefig(fig_path+"Lorenz-2D.eps", format="eps")
+        plt.savefig(fig_path+"2D.eps", format="eps")
+        plt.savefig(fig_path + "2D.test.png")
 
     plt.show()
 
@@ -179,13 +218,16 @@ def draw3d_train_test(real_x, pre_x, real_t, N_step, test_step, fig_path=None):
             pre_x[-test_step:, 2], linewidth=0.6, alpha=alpha, color="peru", dashes=[6, 2])
     ax.plot(real_x[:, 0], real_x[:, 1], real_x[:, 2], linewidth=0.6,
             alpha=0.1, color="steelblue")
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
     if fig_path:
-        plt.savefig(fig_path+"Lorenz-3D.eps", format="eps")
+        plt.savefig(fig_path+"3D.eps", format="eps")
+        plt.savefig(fig_path + "3D.test.png")
 
     plt.show()
 
 
-def draw3d(real_x, pre_x):
+def draw3d(real_x, pre_x, show=True, save_path=None):
 
     real_x = real_x.to('cpu').detach().numpy()
     pre_x = pre_x.to('cpu').detach().numpy()
@@ -201,7 +243,12 @@ def draw3d(real_x, pre_x):
         axs[2].set_xlabel("t (sec)")
     # Adjust layout to prevent overlap
     plt.tight_layout()
-    plt.show()
+    if save_path:
+        plt.savefig(save_path+"1D.eps", format="eps")
+        plt.savefig(save_path+"1D.png")
+    if show:
+        plt.show()
+    plt.close()
 
     plt.figure(2)
     plt.subplot(1, 3, 1)
@@ -222,9 +269,14 @@ def draw3d(real_x, pre_x):
              linewidth=2, label="real", alpha=alpha)
     plt.xlabel("y")
     plt.ylabel("z")
-    plt.suptitle("Real data from LORENZE system - 2D")
-    plt.show()
+    plt.tight_layout()
+    if save_path:
+        plt.savefig(save_path+"2D.eps", format="eps")
+        plt.savefig(save_path+"2D.png")
 
+    if show:
+        plt.show()
+    plt.close()
     fig = plt.figure(3)
     ax = fig.add_subplot(111, projection='3d')
     # 绘制3D折线图
@@ -233,7 +285,13 @@ def draw3d(real_x, pre_x):
     ax.plot(real_x[:, 0], real_x[:, 1], real_x[:, 2],
             label='3D real', alpha=alpha)
     ax.legend()
-    plt.show()
+    if save_path:
+        plt.savefig(save_path+"3D.eps", format="eps")
+        plt.savefig(save_path+"3D.png")
+
+    if show:
+        plt.show()
+    plt.close()
 
 
 def draw2d(real_x, pre_x):
@@ -252,12 +310,12 @@ def draw2d(real_x, pre_x):
     plt.show()
 
 
-def generate_real_x(x0, N_step, X_rightfunc):
-    real_x = torch.zeros(size=(N_step+1, x0.shape[-1]))
-    real_x[0] = x0.clone()
-    for index in range(1, 1+N_step):
-        real_x[index] = X_rightfunc(real_x[index-1].reshape(1, -1))
-    return real_x.detach()
+# def generate_real_x(x0, N_step, X_rightfunc):
+#     real_x = torch.zeros(size=(N_step+1, x0.shape[-1]))
+#     real_x[0] = x0.clone()
+#     for index in range(1, 1+N_step):
+#         real_x[index] = X_rightfunc(real_x[index-1].reshape(1, -1))
+#     return real_x.detach()
 
 
 def fols_Fun(q, x0, t0, h, N, Nvar, ifplot, Funright):
