@@ -54,6 +54,10 @@ Perfoermance comparison
 - `LDN.py`: Implements the Local Domain Normalization method described in the paper. Note that this module has been integrated into main.py. Normally, you do not need to run this file manually.
 - `model.py`: Includes model architectures and loss functions used in the experiments.
 - `utils.py`: Contains utility functions used in the main file.
+- `Plot3D.py`: A utility class for plotting 3D figures.`
+- `./Figure`: Records the pictures drawn during program operation
+- `./Manuscript`: Some images from the paper are saved to help readers on GitHub better understand our project
+- 
 
 ## Instructions
 
