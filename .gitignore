@@ -6,6 +6,7 @@ Figure/*
 !Figure/LDN*
 !Manuscript/Figure/workflow.pdf
 Saved_data/*
+trained_model/*
 Manuscript/*.bib
 IEEEtran_HOWTO.pdf
 IEEEtran.cls
