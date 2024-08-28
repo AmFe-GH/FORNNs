@@ -6,6 +6,14 @@
 ![Contributors](https://img.shields.io/badge/contributors-3-p)
 <p align="center">
 <img src="./Manuscript/Figure/workflow.PNG"/> 
+Workflow of FORNNs.
+    As for the theoretical contribution,
+    this study proves, for the first time, the capability of
+    fractional order RNNs to approximate Caputo fractional order ordinary differential
+    equation system.
+    As for the practical applications,
+    the LDN method is introduced to tackle the
+    convergence challenges of FORNNs.
 </p>
 This repository contains the code to replicate the results presented in the paper "Caputo fractional order recurrent neural networks: efficiently modeling dynamic systems with state spaces". 
 
