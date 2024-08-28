@@ -4,6 +4,8 @@
 ![Dependency](https://img.shields.io/badge/dependency-PyTorch-orange)
 ![Language](https://img.shields.io/badge/language-Python-blue)
 ![Contributors](https://img.shields.io/badge/contributors-3-p)
+
+This repository contains the code to replicate the results presented in the paper "Caputo fractional order recurrent neural networks: efficiently modeling dynamic systems with state spaces". 
 <p align="center">
 <img src="./Manuscript/Figure/workflow.PNG"/> 
 Workflow of FORNNs.
@@ -15,7 +17,7 @@ Workflow of FORNNs.
     the LDN method is introduced to tackle the
     convergence challenges of FORNNs.
 </p>
-This repository contains the code to replicate the results presented in the paper "Caputo fractional order recurrent neural networks: efficiently modeling dynamic systems with state spaces". 
+
 
 ## Abstract
   Recurrent neural networks (RNNs) endowed with continuous-time 
@@ -39,7 +41,19 @@ This repository contains the code to replicate the results presented in the pape
   the superior performance of FORNNs,
   which are entirely consistent with the theoretical proofs,
   and also confirm the effectiveness of  LDN method.
-
+<p align="center">
+<img src="./Manuscript/Figure/Table_compare.PNG"/> 
+    PERFORMANCE OF DIFFERENT MODELS 
+    Note:  
+    (1) "——" means
+      an invalid result due to the excessively smooth $\epsilon$ curve,
+      which prevents an accurate assessment of the convergence
+      speed.  
+      (2) Bold text indicates the top 2 best
+      performances among all models. However,
+      FORNNs-L and FORNNs-XL are excluded from
+      the comparison due to their large number of parameters.
+</p>
 ## Files
 
 - `main.py`: This is the main file. Running this file can fully demonstrate the generation and processing of training data, as well as the learning process and results of FORNNs.
