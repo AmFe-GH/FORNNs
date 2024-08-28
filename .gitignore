@@ -6,7 +6,6 @@ Figure/*
 
 Saved_data/*
 trained_model/*
-Manuscript/*.bib
 IEEEtran_HOWTO.pdf
 IEEEtran.cls
 Plot_yita.py
@@ -20,4 +19,4 @@ Realt_lorenz.npy
 FORNN_ABThta.ipynb
 
 !Figure/LDN*
-!Manuscript/Figure/workflow.*
+!Manuscript/Figure/workflow*.*
