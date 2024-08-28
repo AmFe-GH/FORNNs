@@ -3,8 +3,7 @@ __pycache__
 .vscode
 Manuscript/*
 Figure/*
-!Figure/LDN*
-!Manuscript/Figure/workflow.*
+
 Saved_data/*
 trained_model/*
 Manuscript/*.bib
@@ -19,3 +18,6 @@ Realt_lorenz.npy
 RealData_lorenz.npy
 Realt_lorenz.npy
 FORNN_ABThta.ipynb
+
+!Figure/LDN*
+!Manuscript/Figure/workflow.*
