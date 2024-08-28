@@ -5,13 +5,13 @@
 ![Language](https://img.shields.io/badge/language-Python-blue)
 ![Contributors](https://img.shields.io/badge/contributors-3-p)
 <p align="center">
-<img src="/Manuscript/Figure/figure1.PNG"/> 
+<img src="/Manuscript/Figure/workflow.png"/> 
 </p>
 This repository contains the code to replicate the results presented in the paper "Caputo Fractional Order Recurrent Neural Networks". 
 
 ## Files
 
-- `FORNN_ABTheta.ipynb`: This is the main file. Running the code in this notebook in sequence will reproduce the results reported in the author's paper.
+- `main.py`: This is the main file. Running this file can fully demonstrate the generation and processing of training data, as well as the learning process and results of FORNNs.
 - `Hyperparameters.py`: Contains preset parameter information used in the experiments.
 - `LDN.py`: Implements the Local Domain Normalization method described in the paper.
 - `model.py`: Includes model architectures and loss functions used in the experiments.
@@ -21,9 +21,14 @@ This repository contains the code to replicate the results presented in the pape
 
 To replicate the results:
 
-1. Clone this repository to your local machine.
-2. Run LDN.py to get `init_param_overflow.pth`.
-3. Open and run `FORNN_ABTheta.ipynb` in a Jupyter Notebook environment, following the instructions provided in the notebook.
+1. Clone this repository to your local machine:  
+   `git clone https://github.com/AmFe-GH/FORNNs`
+2. Enter your conda environment:   
+   `conda activate <your_env_name>`
+3. Install the required packages:  
+   `pip install -r requirements.txt`
+4. Run `main.py`.  
+
 
 ## Citation
 
