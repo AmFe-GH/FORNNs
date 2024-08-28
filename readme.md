@@ -6,6 +6,7 @@
 ![Contributors](https://img.shields.io/badge/contributors-3-p)
 
 This repository contains the code to replicate the results presented in the paper "Caputo fractional order recurrent neural networks: efficiently modeling dynamic systems with state spaces". 
+
 <p align="center">
 <img src="./Manuscript/Figure/workflow.PNG"/> 
 Workflow of FORNNs.
@@ -41,21 +42,13 @@ Workflow of FORNNs.
   the superior performance of FORNNs,
   which are entirely consistent with the theoretical proofs,
   and also confirm the effectiveness of  LDN method.
+
 <p align="center">
 <img src="./Manuscript/Figure/Table_compare.PNG"/> 
-    PERFORMANCE OF DIFFERENT MODELS 
-    Note:  
-    (1) "——" means
-      an invalid result due to the excessively smooth $\epsilon$ curve,
-      which prevents an accurate assessment of the convergence
-      speed.  
-      (2) Bold text indicates the top 2 best
-      performances among all models. However,
-      FORNNs-L and FORNNs-XL are excluded from
-      the comparison due to their large number of parameters.
+Perfoermance comparison
 </p>
-## Files
 
+## Files
 - `main.py`: This is the main file. Running this file can fully demonstrate the generation and processing of training data, as well as the learning process and results of FORNNs.
 - `Hyperparameters.py`: Contains preset parameter information used in the experiments.
 - `LDN.py`: Implements the Local Domain Normalization method described in the paper. Note that this module has been integrated into main.py. Normally, you do not need to run this file manually.
