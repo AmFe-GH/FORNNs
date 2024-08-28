@@ -4,7 +4,7 @@ __pycache__
 Manuscript/*
 Figure/*
 !Figure/LDN*
-!Manuscript/Figure/workflow.pdf
+!Manuscript/Figure/workflow.*
 Saved_data/*
 trained_model/*
 Manuscript/*.bib

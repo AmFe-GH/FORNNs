@@ -36,7 +36,7 @@ This repository contains the code to replicate the results presented in the pape
 
 - `main.py`: This is the main file. Running this file can fully demonstrate the generation and processing of training data, as well as the learning process and results of FORNNs.
 - `Hyperparameters.py`: Contains preset parameter information used in the experiments.
-- `LDN.py`: Implements the Local Domain Normalization method described in the paper.
+- `LDN.py`: Implements the Local Domain Normalization method described in the paper. Note that this module has been integrated into main.py. Normally, you do not need to run this file manually.
 - `model.py`: Includes model architectures and loss functions used in the experiments.
 - `utils.py`: Contains utility functions used in the main file.
 
