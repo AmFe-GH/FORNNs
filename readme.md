@@ -1,13 +1,36 @@
 # Repository :rocket: 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) 
-![version](https://img.shields.io/badge/version-v1.3.0-blue) 
+![version](https://img.shields.io/badge/version-v2.1.0-blue) 
 ![Dependency](https://img.shields.io/badge/dependency-PyTorch-orange)
 ![Language](https://img.shields.io/badge/language-Python-blue)
 ![Contributors](https://img.shields.io/badge/contributors-3-p)
 <p align="center">
 <img src="/Manuscript/Figure/workflow.png"/> 
 </p>
-This repository contains the code to replicate the results presented in the paper "Caputo Fractional Order Recurrent Neural Networks". 
+This repository contains the code to replicate the results presented in the paper "Caputo fractional order recurrent neural networks: efficiently modeling dynamic systems with state spaces". 
+
+## Abstract
+  Recurrent neural networks (RNNs) endowed with continuous-time 
+  states have emerged as an adaptive framework for modeling dynamic
+  systems. Among these systems, Caputo fractional order 
+  ordinary differential equation  systems (CFODEs) are gaining prominence
+  due to their non-local characteristics over time. 
+  This study theoretically demonstrates, for the first time,
+  the capability of fractional-order RNNs (FORNNs) to universally approximate
+  CFODEs  with arbitrary precision.
+  Concurrently, during the application of FORNNs to practical scenarios,
+  the negative impact of the complexity of parameter space and
+  ABM solver on FORNNs' performance is first revealed,
+  which are referred to as "Parameter Domain Problems"(PDPs).
+  In response to PDPs,
+  We propose
+  the Local Domain Normalization (LDN),
+  along with introducing a novel loss function to rectify the
+  Hallucination Problem encountered during the learning process.
+  Finally, two real-world examples are presented and validate
+  the superior performance of FORNNs,
+  which are entirely consistent with the theoretical proofs,
+  and also confirm the effectiveness of  LDN method.
 
 ## Files
 
@@ -47,8 +70,8 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-## <img src="https://joonsungpark.s3.amazonaws.com:443/static/assets/characters/profile/Wolfgang_Schulz.png" alt="Generative Wolfgang">   Acknowledgements
+<!-- ## <img src="https://joonsungpark.s3.amazonaws.com:443/static/assets/characters/profile/Wolfgang_Schulz.png" alt="Generative Wolfgang">   Acknowledgements
 
 This work was supported by National Natural Science Foundation of China
 (Grant 12101430) and Department of Science and Technology of Sichuan
-Province (Grant 2021ZYD0018). (Corresponding author: Cong Wu.)(https://yjs.cd120.com/contents/559/1710.html)
+Province (Grant 2021ZYD0018). (Corresponding author: Cong Wu.)(https://yjs.cd120.com/contents/559/1710.html) -->
