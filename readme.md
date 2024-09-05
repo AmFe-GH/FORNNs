@@ -9,7 +9,7 @@ This repository contains the code to replicate the results presented in the pape
 
 <p align="center">
 <img src="./Manuscript/Figure/workflow.PNG"/> 
-Workflow of FORNNs.
+Workflow of FORNNs. 
     As for the theoretical contribution,
     this study proves, for the first time, the capability of
     fractional order RNNs to approximate Caputo fractional order ordinary differential
