@@ -1,4 +1,4 @@
-# Repository :rocket: 
+# <img src="./Manuscript/Figure/bird.svg" /> 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) 
 ![version](https://img.shields.io/badge/version-v2.1.0-blue) 
 ![Dependency](https://img.shields.io/badge/dependency-PyTorch-orange)
