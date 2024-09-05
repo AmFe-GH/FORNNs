@@ -104,8 +104,6 @@ To replicate the results:
 
 If you use this code in your research or find it helpful, please consider citing the original paper:
 
-[not published yet]
-
 
 
 <!-- ## <img src="https://joonsungpark.s3.amazonaws.com:443/static/assets/characters/profile/Wolfgang_Schulz.png" alt="Generative Wolfgang">   Acknowledgements
