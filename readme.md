@@ -26,9 +26,11 @@ Workflow of FORNNs.
   systems. Among these systems, Caputo fractional order 
   ordinary differential equation  systems (CFODEs) are gaining prominence
   due to their non-local characteristics over time. 
+
   This study theoretically demonstrates, for the first time,
   the capability of fractional-order RNNs (FORNNs) to universally approximate
   CFODEs  with arbitrary precision.
+
   Concurrently, during the application of FORNNs to practical scenarios,
   the negative impact of the complexity of parameter space and
   ABM solver on FORNNs' performance is first revealed,
@@ -54,8 +56,7 @@ the proposed FORNNs against other existing integer-order
 state-based models, as shown above. 
 These models include MLP, S4 
 and  various forms of recurrent neural networks (RNNs,
-LSTM, WMC-LSTM,
-GRU, and SRU).
+LSTM, WMC-LSTM, GRU, and SRU).
 
 In terms of the model structures,
 The MLP mentioned here consists of a single hidden
