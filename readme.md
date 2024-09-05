@@ -43,10 +43,38 @@ Workflow of FORNNs.
   which are entirely consistent with the theoretical proofs,
   and also confirm the effectiveness of  LDN method.
 
+
+## Perfoermance Comparison
 <p align="center">
 <img src="./Manuscript/Figure/Table_compare.PNG"/> 
-Perfoermance comparison
 </p>
+Here, a comparative analysis is
+conducted to evaluate the performance of
+the proposed FORNNs against other existing integer-order
+state-based models, as shown above. 
+These models include MLP, S4 
+and  various forms of recurrent neural networks (RNNs,
+LSTM, WMC-LSTM,
+GRU, and SRU).
+
+In terms of the model structures,
+The MLP mentioned here consists of a single hidden
+layer with five neurons. Other temporal models
+referenced in this context retain their original
+structures as described in the corresponding papers,
+with only a reduction in the number of parameters.
+
+In terms of the ability to fit dynamic systems,
+FORNNs have demonstrated superior performance compared
+to other proposed models, achieving convergence with
+fewer training iterations. Additionally, the performance
+observed from $FORNNs-L$ ($N$ = 10) to $FORNNs-XL$ ($N$ = 100)
+indicates that a larger number of parameters significantly
+enhances the model's learning capacity, leading to a marked
+decrease in $\epsilon$. However, this also
+increases the number of training epochs  required for
+convergence. This phenomenon suggests that $N$ should be flexibly
+chosen to balance learning capacity and convergence speed.
 
 ## Files
 - `main.py`: This is the main file. Running this file can fully demonstrate the generation and processing of training data, as well as the learning process and results of FORNNs.
