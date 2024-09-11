@@ -4,7 +4,7 @@
 ![Dependency](https://img.shields.io/badge/dependency-PyTorch-orange)
 ![Language](https://img.shields.io/badge/language-Python-blue)
 ![Contributors](https://img.shields.io/badge/contributors-3-p) 
-# <img src="./Manuscript/Figure/bird.PNG" /> 
+# <img src="./Manuscript/Figure/bird.png" /> 
 This repository contains the code to replicate the results presented in the paper "Caputo fractional order recurrent neural networks: efficiently modeling dynamic systems with state spaces". 
 
 <p align="center">
