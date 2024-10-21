@@ -4,7 +4,7 @@ import torch.nn as nn
 
 
 class G_rightfunc_class:
-    def __init__(self, A, B, tau, N, n):
+    def __init__(self, A, B, tau, N, n, proj_input=None):
         assert A.requires_grad == True
         assert B.requires_grad == True
         assert tau.requires_grad == True
@@ -15,6 +15,10 @@ class G_rightfunc_class:
         pad = torch.nn.ZeroPad2d(padding=(n, 0, 0, 0))
         down_matrix = pad(BA)
 
+        self.proj_input = proj_input
+        if proj_input is not None:
+            self.proj_input.to(A.device)
+
         assert up_matrix.shape[-1] == down_matrix.shape[-1] == N+n
         self.padding_matrix = torch.cat((up_matrix, down_matrix), 0)
         assert self.padding_matrix.requires_grad == True
@@ -23,27 +27,50 @@ class G_rightfunc_class:
         assert self.padding_matrix.device == A.device
         self.tau = tau  # must be deepcopy
 
-    def __call__(self, x):
+    def __call__(self, x, inputs=None):
+
+        if inputs is not None:
+            assert self.proj_input is not None
 
         if len(x.shape) == 1:
-            stand_input = x.unsqueeze(0)
+            stand_x = x.unsqueeze(0)
         elif len(x.shape) == 2:
-            stand_input = x.clone()
+            stand_x = x
         else:
             raise TypeError
 
+        if inputs is not None:
+            if len(inputs.shape) == 1:
+                stand_inputs = inputs.unsqueeze(0)
+            elif len(inputs.shape) == 2:
+                stand_inputs = inputs
+            elif len(inputs.shape) == 0:
+                stand_inputs = inputs.unsqueeze(0).unsqueeze(0)
+                assert len(stand_inputs.shape) == 2
+            else:
+                raise TypeError("inputs.shape", inputs, inputs.shape)
+
         assert torch.all(self.tau != 0.)
         temp = -1/self.tau
-        elementA = temp * torch.sigmoid(stand_input)
-        assert self.padding_matrix.dtype == stand_input.dtype, (
-            self.padding_matrix.dtype, stand_input.dtype)
+        elementA = temp*stand_x
+        # elementA = torch.zeros_like(stand_x)-1/self.tau
+
+        assert self.padding_matrix.dtype == stand_x.dtype, (
+            self.padding_matrix.dtype, stand_x.dtype)
 
         elementB = torch.matmul(torch.sigmoid(
-            stand_input), self.padding_matrix.t())
+            stand_x), self.padding_matrix.t())
 
         assert elementA.shape == elementB.shape
         result = elementA + elementB
 
+        if inputs is not None:
+            elementC = self.proj_input(
+                torch.cat([stand_x, stand_inputs], dim=-1))
+            # elementC = stand_inputs
+            result = elementC + result
+        # print('in G_F: ', elementA, elementB, elementC)
+        # print('in G_F: ', result)
         return result.reshape(x.shape)
 
 

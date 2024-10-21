@@ -12,7 +12,6 @@ import torch
 from utils import draw3d_train_test
 import os
 from Hyperparameters import *
-import random
 import utils
 
 Simulation_system = str(
@@ -28,7 +27,7 @@ os.makedirs('./Figure', exist_ok=True)
 
 
 N_of_func_right, n_of_func_right, dtype, device, N_step, \
-    test_step, alpha, beta, epoch_number, width_step, x0, random_seed, lr, LDN_lr\
+    test_step, alpha, beta, epoch_number, width_step, x0, random_seed, lr, LDN_lr, epochs_LND\
     = set_Hyperparameters(Simulation_system)
 
 if Simulation_system == 'Lorenz':
@@ -66,7 +65,6 @@ elif train_state == 0:
     B = torch.rand(N_of_func_right, n_of_func_right,
                    requires_grad=True, device=device)
     Theta = torch.rand(N_of_func_right, 1, requires_grad=True, device=device)
-    min_loss = 1e10
     optimizer = optim.Adam([A, B, Theta], lr=LDN_lr, weight_decay=0)
 else:
     raise TypeError
@@ -90,7 +88,7 @@ elif os.path.exists(LDN_data_path):
 assert torch.isnan(real_x_pre).any() == False
 assert real_x_pre.requires_grad == False
 loss_history = []
-pbar = tqdm(range(40000))
+pbar = tqdm(range(epochs_LND))
 for epoch_num, _ in enumerate(pbar):
     train_data = real_x_pre + \
         torch.rand_like(real_x_pre)*(real_x_pre.max())

@@ -89,6 +89,17 @@ def X_rightfunc_Chua_numpy(x):
     return val
 
 
+def generate_bits(seq_len, device):
+    sequences = []
+
+    # seq_len = torch.randint(
+    #     low=seq_len_range[0], high=seq_len_range[1], size=(1,)).item()
+    sequences = torch.randint(0, 2, (seq_len, 1)).float()
+    xor_value = sequences.sum() % 2
+    labels = xor_value
+    return sequences.to(device), labels.to(device)
+
+
 def detect_exceptions(arr):
     """
     检测NumPy数组或PyTorch张量中的异常数值。
@@ -349,15 +360,45 @@ def fols_Fun(q, x0, t0, h, N, Nvar, ifplot, Funright):
     return X, t
 
 
+# def fols_Fun_tensor(q, x0, t0, h, N, Nvar, ifplot, Funright):
+#     device = x0.device
+#     M = np.zeros((1, Nvar))
+#     x = torch.zeros((N + 1, Nvar), device=device)
+#     x1 = torch.zeros((N + 1, Nvar), device=device)
+#     Fx0 = Funright(x0)
+#     x1[0, :] = x0 + np.power(h, q) * Fx0 / (gamma(q) * q)
+#     Fx1 = Funright(x1[0, :])
+#     x[0, :] = x0 + np.power(h, q) * (Fx1 + q * Fx0) / gamma(q + 2)
+#     for n in range(1, N):
+#         # 当n == 0的时候
+#         # X1的部分
+#         M = (np.power(n, q + 1) - (n - q) * np.power(n + 1, q)) * Fx0
+#         # YP的部分
+#         NN = (np.power(n + 1, q) - np.power(n, q)) * Fx0
+#         for j in range(1, n + 1):
+#             Fx = Funright(x[j - 1, :])
+#             M = M + (np.power(n - j + 2, q + 1) + np.power(n - j, q +
+#                      1) - np.dot(2, np.power(n - j + 1, q + 1))) * Fx
+#             NN = NN + (np.power(n - j + 1, q) - np.power(n - j, q)) * Fx
+#         x1[n, :] = x0 + np.power(h, q) * NN / (gamma(q) * q)
+#         Fx = Funright(x1[n, :])
+#         x[n, :] = x0 + np.power(h, q) * (Fx + M) / gamma(q + 2)
+#     X = torch.cat((x0.unsqueeze(dim=0), x[0:N, :]), dim=0)
+#     detect_exceptions(X)
+#     t = np.array(range(1, N + 1))
+#     t = t0 + np.dot(h, t)
+#     t = t.tolist()
+#     t.insert(0, t0)
+#     return X, t
 def fols_Fun_tensor(q, x0, t0, h, N, Nvar, ifplot, Funright):
     device = x0.device
     M = np.zeros((1, Nvar))
-    x = torch.zeros((N + 1, Nvar), device=device)
-    x1 = torch.zeros((N + 1, Nvar), device=device)
+    x = [None for _ in range(N+1)]
+    x1 = [None for _ in range(N+1)]
     Fx0 = Funright(x0)
-    x1[0, :] = x0 + np.power(h, q) * Fx0 / (gamma(q) * q)
-    Fx1 = Funright(x1[0, :])
-    x[0, :] = x0 + np.power(h, q) * (Fx1 + q * Fx0) / gamma(q + 2)
+    x1[0] = x0 + np.power(h, q) * Fx0 / (gamma(q) * q)
+    Fx1 = Funright(x1[0])
+    x[0] = x0 + np.power(h, q) * (Fx1 + q * Fx0) / gamma(q + 2)
     for n in range(1, N):
         # 当n == 0的时候
         # X1的部分
@@ -365,20 +406,70 @@ def fols_Fun_tensor(q, x0, t0, h, N, Nvar, ifplot, Funright):
         # YP的部分
         NN = (np.power(n + 1, q) - np.power(n, q)) * Fx0
         for j in range(1, n + 1):
-            Fx = Funright(x[j - 1, :])
+            Fx = Funright(x[j - 1])
             M = M + (np.power(n - j + 2, q + 1) + np.power(n - j, q +
                      1) - np.dot(2, np.power(n - j + 1, q + 1))) * Fx
             NN = NN + (np.power(n - j + 1, q) - np.power(n - j, q)) * Fx
-        x1[n, :] = x0 + np.power(h, q) * NN / (gamma(q) * q)
-        Fx = Funright(x1[n, :])
-        x[n, :] = x0 + np.power(h, q) * (Fx + M) / gamma(q + 2)
-    X = torch.cat((x0.unsqueeze(dim=0), x[0:N, :]), dim=0)
+        x1[n] = x0 + np.power(h, q) * NN / (gamma(q) * q)
+        Fx = Funright(x1[n])
+        x[n] = x0 + np.power(h, q) * (Fx + M) / gamma(q + 2)
+    X = torch.cat((x0.unsqueeze(dim=0), torch.stack(x[:N], dim=0)), dim=0)
     detect_exceptions(X)
     t = np.array(range(1, N + 1))
     t = t0 + np.dot(h, t)
     t = t.tolist()
     t.insert(0, t0)
     return X, t
+
+
+class fols_Fun_tensor_with_inputs:
+    def __init__(self, feature_size, N, device):
+        self.backbone = torch.nn.Sequential(torch.nn.Linear(N, 50*N),
+                                            torch.nn.LeakyReLU(),
+                                            torch.nn.Linear(50*N, 10*N),
+                                            torch.nn.LeakyReLU(),
+                                            torch.nn.Linear(
+                                            10*N, 1))
+        self.backbone.to(device)
+
+    def __call__(self, q, x0, t0, h, N, Nvar, ifplot, Funright, inputs):
+        x = [None for _ in range(N)]
+        x1 = [None for _ in range(N)]
+        Fx0 = Funright(x0, inputs[0])
+        x1[0] = x0 + np.power(h, q) * Fx0 / (gamma(q) * q)
+        Fx1 = Funright(x1[0], inputs[0])
+        x[0] = x0 + np.power(h, q) * (Fx1 + q * Fx0) / gamma(q + 2)
+        # x[0] = torch.sigmoid(x[0])
+        for n in range(1, N):
+            # 当n == 0的时候
+            # X1的部分
+            M = (np.power(n, q + 1) - (n - q) * np.power(n + 1, q)) * Fx0
+            # YP的部分
+            NN = (np.power(n + 1, q) - np.power(n, q)) * Fx0
+            x1[n] = x0 + np.power(h, q) * NN / (gamma(q) * q)
+            # print('x1[n]', x1[n])
+            Fx = Funright(x1[n], inputs[n])
+            detect_exceptions(Fx)
+            x[n] = x0 + np.power(h, q) * (Fx + M) / gamma(q + 2)
+            # if n != N-1:
+            #     x[n] = torch.sigmoid(x[n])
+        # return 0.001*self.proj(x[N-1].squeeze())+self.backbone(inputs.squeeze())
+        return torch.sigmoid(x[N-1].squeeze().mean()+self.backbone(inputs.squeeze()))
+
+# def fols_Fun_tensor_with_inputs(q, x0, t0, h, N, Nvar, ifplot, Funright, inputs):
+#     device = x0.device
+#     M = np.zeros((1, Nvar))
+#     x = [None for _ in range(N+1)]
+#     x[0] = x0
+#     Fx0 = Funright(x0, inputs[0])
+#     x[1] = Fx0
+#     for n in range(1, N):
+#         Fx = Funright(x[n], inputs[n])
+#         detect_exceptions(Fx)
+#         x[n+1] = Fx
+#     # print('In fols:', x[n], Fx)
+#     return x[n+1].squeeze()
+
 # article:Data-driven Neural Network Discovery of Caputo Fractional Order Systems
 # def I(F_function,start,end,width_step):
 
