@@ -46,6 +46,26 @@ the superior performance of FORNNs,
 which are entirely consistent with the theoretical proofs,
 and also confirm the effectiveness of LDN method.
 
+## Our contribution:
+
+- We propose an effective, novel, and interpretable state-space model, FORNNs,
+  which exploits the non-locality of fractional-order gradients.
+  Additionally,
+  we present a new learning framework, LDN,
+  specifically designed for FORNNs.
+- This work theoretically demonstrates the capability of
+  FORNNs to approximate CFODEs
+  with arbitrary accuracy $\epsilon_1$,
+  for the first time.
+- In three tasks, FORNNs exhibit superior performance in terms of $\epsilon$,
+  fitting accuracy
+  and convergence difficulty,
+  compared to other integer-order state-based benchmarks.
+- During the application of FORNNs to practical scenarios,
+  the negative impact of the complexity of parameter space and
+  ABM solver on FORNNs' performance is first revealed,
+  which are referred to as 'Parameter Domain Problems'(PDPs) and Hallucination Problem.
+
 ## Perfoermance Comparison
 
 <p align="center">
