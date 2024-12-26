@@ -66,7 +66,7 @@ and also confirm the effectiveness of LDN method.
   ABM solver on FORNNs' performance is first revealed,
   which are referred to as 'Parameter Domain Problems'(PDPs) and Hallucination Problem.
 
-## Perfoermance Comparison
+## Performance Comparison
 
 <p align="center">
 <img src="./Manuscript/Figure/Table_compare1.PNG"/> 
