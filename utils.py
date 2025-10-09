@@ -3,7 +3,6 @@ import numpy as np
 from scipy.special import gamma
 import matplotlib.pyplot as plt
 import torch
-from torchkeras import VLog
 from tqdm import tqdm
 import seaborn as sns
 
@@ -175,7 +174,7 @@ def draw3d_train_test(real_x, pre_x, real_t, N_step, test_step, fig_path=None):
 
     # Save the figure if fig_path is provided
     if fig_path:
-        plt.savefig(fig_path + "1D.test.eps", format="eps")
+        plt.savefig(fig_path + "1D.test.svg", format="svg")
         plt.savefig(fig_path + "1D.test.png")
 
     plt.show()
@@ -213,7 +212,7 @@ def draw3d_train_test(real_x, pre_x, real_t, N_step, test_step, fig_path=None):
     ax = plt.gca()
     ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
     if fig_path:
-        plt.savefig(fig_path+"2D.eps", format="eps")
+        plt.savefig(fig_path+"2D.svg", format="svg")
         plt.savefig(fig_path + "2D.test.png")
 
     plt.show()
@@ -232,7 +231,7 @@ def draw3d_train_test(real_x, pre_x, real_t, N_step, test_step, fig_path=None):
     ax = plt.gca()
     ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
     if fig_path:
-        plt.savefig(fig_path+"3D.eps", format="eps")
+        plt.savefig(fig_path+"3D.svg", format="svg")
         plt.savefig(fig_path + "3D.test.png")
 
     plt.show()
@@ -255,7 +254,7 @@ def draw3d(real_x, pre_x, show=True, save_path=None):
     # Adjust layout to prevent overlap
     plt.tight_layout()
     if save_path:
-        plt.savefig(save_path+"1D.eps", format="eps")
+        plt.savefig(save_path+"1D.svg", format="svg")
         plt.savefig(save_path+"1D.png")
     if show:
         plt.show()
@@ -282,7 +281,7 @@ def draw3d(real_x, pre_x, show=True, save_path=None):
     plt.ylabel("z")
     plt.tight_layout()
     if save_path:
-        plt.savefig(save_path+"2D.eps", format="eps")
+        plt.savefig(save_path + "2D.svg", format="svg")
         plt.savefig(save_path+"2D.png")
 
     if show:
@@ -297,7 +296,7 @@ def draw3d(real_x, pre_x, show=True, save_path=None):
             label='3D real', alpha=alpha)
     ax.legend()
     if save_path:
-        plt.savefig(save_path+"3D.eps", format="eps")
+        plt.savefig(save_path + "3D.svg", format="svg")
         plt.savefig(save_path+"3D.png")
 
     if show:
