@@ -16,7 +16,7 @@ def set_Hyperparameters(Simulation_system):
         width_step = 0.01
         x0 = torch.tensor([-8., 7, 27], dtype=dtype, device=device)
         random_seed = 491
-        lr = 1.5e-4
+        lr = 1e-4
         LDN_lr = 4e-3
         epochs_LND = 200
     elif Simulation_system == 'Chua':

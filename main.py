@@ -144,7 +144,7 @@ if train_state != 2:
     for epoch_num, _ in enumerate(pbar):
         # train_data = real_x_pre + \
         #     torch.rand_like(real_x_pre)*(real_x_pre.max())
-        train_data = real_x_pre + torch.rand_like(real_x_pre,dtype = dtype) * 10
+        train_data = real_x_pre + torch.rand_like(real_x_pre, dtype=dtype) * 10
         # train_data = real_x_pre
 
         train_labels = X_rightfunc(train_data)
@@ -199,7 +199,7 @@ real_t = torch.tensor(real_t, dtype=dtype, device=device, requires_grad=False)
 # draw3d(real_x, real_x)
 
 
-save_fig_path = f"./Figure/{Simulation_system}/"
+save_fig_path = "./Figure/" + Simulation_system + "/" + "OursFORNNs" + "/"
 os.makedirs(save_fig_path, exist_ok=True)
 train_state = int(
     input("Training Process option: \n 1:train from checkpoint;\n 0: train from scratch \n")
@@ -232,7 +232,7 @@ elif train_state == 0:
     min_loss = 1e10
 else:
     raise TypeError
-history = {"loss": [], "epsilon": []}
+history = {"loss": [], "epsilon_train": [], "epsilon_test": []}
 # vlog = VLog(epoch_number//log_interval,
 #             monitor_metric='val_loss', monitor_mode='min')
 # vlog.log_start()
@@ -244,15 +244,26 @@ for epoch in range(epoch_number):
     init_x0 = torch.cat((x0, hidden_state_x0.squeeze()))
     model = G_rightfunc_class(A, B, tau, N_of_func_right, n_of_func_right)
     pre_x, _ = utils.fols_Fun_tensor(
-        alpha, init_x0, 0, width_step, N_step, N_of_func_right + n_of_func_right, False, model
+        alpha,
+        init_x0,
+        0,
+        width_step,
+        N_step + test_step,
+        N_of_func_right + n_of_func_right,
+        False,
+        model,
     )
+    assert len(pre_x) == N_step + test_step + 1
 
     assert pre_x.requires_grad
-    key_pre_x = pre_x[:, :n_of_func_right]
+    pre_x = pre_x[:, :n_of_func_right]
+    # key_pre_x = pre_x[: N_step+1, :]
 
-    key_real_x = real_x[: N_step + 1, :]
-    assert key_pre_x.shape == key_real_x.shape, [key_pre_x.shape, key_real_x.shape]
-    loss, loss_output, loss_param = criterion(key_real_x, key_pre_x, A, B, Theta)
+    # key_real_x = real_x[: N_step + 1, :]
+    # assert key_pre_x.shape == key_real_x.shape, [key_pre_x.shape, key_real_x.shape]
+    loss, loss_output, loss_param = criterion(
+        real_x[: N_step + 1, :], pre_x[: N_step + 1, :], A, B, Theta
+    )
 
     optimizer_Adam.zero_grad()
     loss.backward()
@@ -273,18 +284,27 @@ for epoch in range(epoch_number):
     if epoch % log_interval == 0:
         history["loss"].append(loss.item())
 
-        draw3d(key_real_x, key_pre_x, show=False, save_path=save_fig_path + str(epoch) + "th_")
-        torch.save(key_pre_x, "./Saved_data/key_pre_x_" + str(epoch) + ".pth")
+        draw3d(real_x, pre_x, show=False, save_path=save_fig_path + str(epoch) + "th_")
+        # torch.save(key_pre_x, "./Saved_data/key_pre_x_" + str(epoch) + ".pth")
         # vlog.log_epoch({'val_loss': loss.item(),
         #                 'train_loss': loss.item()})
 
-        epsilon = torch.sqrt(torch.sum((key_pre_x - key_real_x) ** 2, dim=-1)).max()
-        history["epsilon"].append(epsilon.item())
+        epsilon_train = torch.sqrt(
+            torch.sum((pre_x[: N_step + 1, :] - real_x[: N_step + 1, :]) ** 2, dim=-1)
+        ).max()
+        epsilon_test = torch.sqrt(
+            torch.sum((pre_x[-test_step:, :] - real_x[-test_step:, :]) ** 2, dim=-1)
+        ).max()
+        history["epsilon_train"].append(epsilon_train.item())
+        history["epsilon_test"].append(epsilon_test.item())
+
         print(
             "epoch:",
             epoch,
-            " epsilon",
-            epsilon.item(),
+            "epsilon train:",
+            epsilon_train.item(),
+            "epsilon test:",
+            epsilon_test.item(),
             " loss:",
             loss.item(),
             "\n alpha",

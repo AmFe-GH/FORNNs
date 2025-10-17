@@ -1,0 +1,144 @@
+Lorenz:
+  n_of_func_right: 3 
+  device: "cuda:0"
+  N_step: 500
+  test_step: 100
+  alpha: 0.996
+  width_step: 0.01
+  x0: [-8.0, 7.0, 27.0]
+  terminal_log_interval: 10
+  fig_log_interval: 10
+  ODELSTM:
+    random_seed: 491
+    lr: 0.003
+    hidden_dim: 32
+    epoch_num: 100
+
+  CTGRU:
+    random_seed: 491
+    lr: 0.001
+    hidden_dim: 32
+    epoch_num: 100
+
+  BidirectionalRNN:
+    random_seed: 491
+    lr: 0.001
+    hidden_dim: 32
+    epoch_num: 100
+
+  GRUD:
+    random_seed: 491
+    lr: 0.005
+    hidden_dim: 32
+    epoch_num: 100
+
+  PhasedLSTM:
+    random_seed: 491
+    lr: 0.001
+    hidden_dim: 32
+    epoch_num: 100
+
+  GRUODE:
+    random_seed: 491
+    lr: 0.001
+    hidden_dim: 32
+    epoch_num: 100
+  AugmentedLSTM:
+    random_seed: 491
+    lr: 0.001
+    hidden_dim: 32
+    epoch_num: 100
+  CTRNN:
+    random_seed: 491
+    lr: 0.001
+    hidden_dim: 32
+    epoch_num: 100
+  ODERNN:
+    random_seed: 491
+    lr: 0.003
+    hidden_dim: 32
+    epoch_num: 100
+  RNNDecay:
+    random_seed: 491
+    lr: 0.003
+    hidden_dim: 32
+    epoch_num: 100
+  S4:
+    random_seed: 491
+    lr: 0.003
+    hidden_dim: 32
+    epoch_num: 100
+
+Chua:
+  n_of_func_right: 3
+  device: "cuda:0"
+  N_step: 350
+  test_step: 50
+  alpha: 0.99
+  width_step: 0.01
+  x0: [1.45305, -4.36956, 0.15034]
+  terminal_log_interval: 10
+  fig_log_interval: 10
+  ODELSTM:
+    random_seed: 42
+    lr: 0.003
+    epoch_num: 100
+    hidden_dim: 16
+  CTGRU:
+    random_seed: 42
+    lr: 0.0005
+    epoch_num: 100
+    hidden_dim: 16
+  BidirectionalRNN:
+    random_seed: 42
+    lr: 0.0007
+    epoch_num: 100
+    hidden_dim: 16
+  GRUD:
+    random_seed: 42
+    lr: 0.001
+    epoch_num: 300
+    hidden_dim: 16
+  PhasedLSTM:
+    random_seed: 42
+    lr: 0.0008
+    epoch_num: 300
+    hidden_dim: 16
+  GRUODE:
+    random_seed: 42
+    lr: 0.001
+    epoch_num: 300
+    hidden_dim: 16
+  AugmentedLSTM:
+    random_seed: 42
+    lr: 0.0005
+    epoch_num: 300
+    hidden_dim: 16
+  CTRNN:
+    random_seed: 42
+    lr: 0.0005
+    epoch_num: 300
+    hidden_dim: 16
+  ODERNN:
+    random_seed: 42
+    lr: 0.003
+    epoch_num: 300
+    hidden_dim: 16
+  RNNDecay:
+    random_seed: 42
+    lr: 0.002
+    epoch_num: 300
+    hidden_dim: 16
+  S4:
+    random_seed: 42
+    lr: 0.001
+    epoch_num: 300
+    hidden_dim: 16
+  KKTFRNNs:
+    random_seed: 42
+    lr: 0.001
+    epoch_num: 100
+    hidden_dim: 16
+    gamma: 0.99        # Fractional order parameter (0 < gamma <= 1 for stability)
+    theta: 1.0         # Convergence rate parameter
+    dt: 0.01           # Time step for numerical integration
