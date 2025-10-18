@@ -1,7 +1,6 @@
 __pycache__
 .ipynb_chepoints
 .vscode
-Manuscript/*
 Figure/*
 .git
 Saved_data/*
@@ -22,12 +21,4 @@ XOR.py
 LDN.py
 *.pdf
 !Figure/LDN*
-!./Manuscript/Figure/workflow.pdf
-!./Manuscript/Figure/workflow.PNG
-!./Manuscript/Figure/Table_compare.PNG
-!./Manuscript/Figure/bird.svg
-!./Manuscript/Figure/bird.png
-!./Manuscript/Figure/Table_compare1.PNG
-!./Manuscript/Figure/Table_compare2.PNG
-!./Manuscript/Figure/hotmap.PNG
 
