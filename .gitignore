@@ -3,6 +3,7 @@ __pycache__
 .vscode
 Figure/*
 .git
+.gitignore
 Saved_data/*
 trained_model/*
 IEEEtran_HOWTO.pdf
