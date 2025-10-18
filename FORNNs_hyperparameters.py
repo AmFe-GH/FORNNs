@@ -1,6 +1,4 @@
 import torch
-
-
 def set_Hyperparameters(Simulation_system):
 
     if Simulation_system == 'Lorenz':

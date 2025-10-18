@@ -1,7 +1,7 @@
 # from torchkeras import VLog
 import timeit
 import numpy as np
-import Hyperparameters
+import FORNNs_hyperparameters
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from utils import (
@@ -25,7 +25,7 @@ import torch.optim as optim
 import torch
 from utils import draw3d_train_test
 import os
-from Hyperparameters import *
+from FORNNs_hyperparameters import *
 import utils
 
 Simulation_system = str(input("Simulation system:  Lorenz or Chua \n"))

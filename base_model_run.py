@@ -28,11 +28,13 @@ model_list = {
     "CTRNN": CTRNN,
     "ODERNN": ODERNN,
     "RNNDecay": Classic_RNN,
-    "S4": S4,  # Added S4 model
-    "KKTFRNNs": KKTFRNNs,  # Added KKT Fractional-Order RNN model
+    "S4": S4,  
+    "KKTFRNNs": KKTFRNNs,
 }
 
-target_system_config = utils.load_config(config_file="Hyperparameters.yaml")[Simulation_system]
+target_system_config = utils.load_config(config_file="base_model_hyperparameters.yaml")[
+    Simulation_system
+]
 
 dtype = torch.float32
 device = target_system_config["device"]
@@ -74,14 +76,12 @@ for model_name, cell_class in model_list.items():
             device=device,
         )
     elif model_name == "S4":
-        # Initialize S4 model
         model_cell = S4(
             input_dim=model_config["hidden_dim"],
             hidden_dim=model_config["hidden_dim"],
             device=device,
         ).to(device)
     elif model_name == "ODERNN":
-        # Create neural ODE components required for ODE-RNN model construction
         ode_func_net = torch.nn.Sequential(
             torch.nn.Linear(model_config["hidden_dim"], 50),
             torch.nn.Tanh(),
@@ -103,9 +103,6 @@ for model_name, cell_class in model_list.items():
             device=device,
         ).to(device)
 
-        # Configure ODERNN with proper input dimensions
-        # Note: input_dim should match the output dimension (n_of_func_right)
-        # Encoder_z0_ODE_RNN concatenates data with mask, hence input_dim is effectively doubled
         model_cell = ODERNN(
             input_dim=n_of_func_right,
             latent_dim=model_config["hidden_dim"],
@@ -115,7 +112,6 @@ for model_name, cell_class in model_list.items():
             n_units=model_config["hidden_dim"],
         ).to(device) 
     elif model_name == "RNNDecay":
-        # Initialize RNN Decay model with exponential decay cell
         model_cell = Classic_RNN(
             input_dim=n_of_func_right,
             latent_dim=model_config["hidden_dim"],
@@ -125,11 +121,10 @@ for model_name, cell_class in model_list.items():
             concat_mask=True,
         ).to(device)
     elif model_name == "KKTFRNNs":
-        # Initialize KKT Fractional-Order RNN model with special parameters
         model_cell = KKTFRNNs(
             units=model_config["hidden_dim"],
-            gamma=model_config.get("gamma", 0.99),  # Fractional order parameter
-            theta=model_config.get("theta", 1.0),   # Convergence rate parameter
+            gamma=model_config.get("gamma", 0.99), 
+            theta=model_config.get("theta", 1.0),
             input_dim=model_config["hidden_dim"],
             output_dim=n_of_func_right,
             device=device,

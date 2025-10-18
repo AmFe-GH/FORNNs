@@ -124,7 +124,6 @@ class additional_model(nn.Module):
 class Linear_model(nn.Module):
     def __init__(self, layers):
         super().__init__()
-        # 定义三层全连接层
         self.linear1 = nn.Linear(layers[0], layers[1], dtype=torch.float32)
         self.linear2 = nn.Linear(layers[1], layers[2], dtype=torch.float32)
 
@@ -154,7 +153,9 @@ class Model_for_init_param:
 
 
 class CTRNNCell(nn.Module):
-    def __init__(self, units, method, num_unfolds=None, tau=1, input_dim=None, output_dim = 3,device="cpu"):
+    def __init__(
+        self, units, method, num_unfolds=None, tau=1, input_dim=None, output_dim=3, device="cpu"
+    ):
         super(CTRNNCell, self).__init__()
 
         self.device = torch.device(device)
@@ -199,7 +200,6 @@ class CTRNNCell(nn.Module):
         self.bias = nn.Parameter(torch.zeros(self.units, device=self.device))
         self.scale = nn.Parameter(torch.ones(self.units, device=self.device))
         self.init_state_proj = nn.Linear(self.output_dim, self.units, bias=False).to(self.device)
-        # 初始化权重
         nn.init.xavier_uniform_(self.kernel.weight)
         nn.init.orthogonal_(self.recurrent_kernel.weight)
 
@@ -207,8 +207,10 @@ class CTRNNCell(nn.Module):
         """ODE函数，用于torchode"""
         inputs = args["inputs"]
         return self.dfdt(inputs, y)
+
     def get_initial_state(self, batch_size, init_position):
         return self.init_state_proj(init_position)
+
     def forward(self, inputs, hidden_state, elapsed=1.0):
         if isinstance(inputs, (tuple, list)):
             if len(inputs) > 1:
@@ -224,13 +226,10 @@ class CTRNNCell(nn.Module):
         hidden_state = hidden_state.to(self.device)
 
         if self.method == "dopri5":
-            # 使用torchode求解
             if not isinstance(elapsed, torch.Tensor):
                 elapsed = torch.tensor(elapsed, device=self.device)
 
-            # 处理批次维度
             if elapsed.dim() > 0 and len(elapsed) > 1:
-                # 批次处理
                 results = []
                 for i in range(len(elapsed)):
                     t_span = torch.tensor([0.0, elapsed[i].item()], device=self.device)
@@ -287,9 +286,12 @@ class CTRNNCell(nn.Module):
 
         return hidden_state + delta_t * (k1 + 2 * k2 + 2 * k3 + k4) / 6.0
 
+
 CTRNN = CTRNNCell
+
+
 class LSTMCell(nn.Module):
-    def __init__(self, units, input_dim=None, output_dim=3,device="cpu"):
+    def __init__(self, units, input_dim=None, output_dim=3, device="cpu"):
         super(LSTMCell, self).__init__()
         self.units = units
         self.device = torch.device(device)
@@ -322,7 +324,6 @@ class LSTMCell(nn.Module):
     def forward(self, inputs, states, elapsed=1.0):
         cell_state, output_state = states
 
-        # 处理输入连接
         if isinstance(inputs, (tuple, list)):
             if len(inputs) > 1:
                 inputs = torch.cat([inputs[0], inputs[1]], dim=-1)
@@ -333,7 +334,6 @@ class LSTMCell(nn.Module):
         cell_state = cell_state.to(self.device)
         output_state = output_state.to(self.device)
 
-        # 动态构建
         if self.input_kernel is None:
             self._build_weights(inputs.shape[-1])
 
@@ -350,9 +350,12 @@ class LSTMCell(nn.Module):
 
         return new_output, (new_cell, new_output)
 
+
 AugmentedLSTM = LSTMCell
+
+
 class ODELSTM(nn.Module):
-    def __init__(self, units, input_dim=None, output_dim =3,device="cpu"):
+    def __init__(self, units, input_dim=None, output_dim=3, device="cpu"):
         super(ODELSTM, self).__init__()
         self.units = units
         self.device = torch.device(device)
@@ -376,7 +379,6 @@ class ODELSTM(nn.Module):
         nn.init.zeros_(self.input_kernel.bias)
 
     def get_initial_state(self, batch_size, init_position):
-
         return (
             self.init_state_proj1(init_position),
             self.init_state_proj2(init_position),
@@ -413,7 +415,7 @@ class ODELSTM(nn.Module):
 
 
 class CTGRU(nn.Module):
-    def __init__(self, units, M=8, input_dim=None,output_dim =3, device="cpu"):
+    def __init__(self, units, M=8, input_dim=None, output_dim=3, device="cpu"):
         super(CTGRU, self).__init__()
         self.units = units
         self.M = M
@@ -443,6 +445,7 @@ class CTGRU(nn.Module):
         self.detect_layer = nn.Linear(fused_dim, self.units).to(self.device)
         self.update_layer = nn.Linear(fused_dim, self.units * self.M).to(self.device)
         self.init_state_proj = nn.Linear(self.output_dim, self.units * self.M).to(self.device)
+
     def get_initial_state(self, batch_size, init_position):
         return self.init_state_proj(init_position)
         # return torch.zeros(batch_size, self.units * self.M, device=self.device)
@@ -463,11 +466,9 @@ class CTGRU(nn.Module):
         if self.retrieval_layer is None:
             self._build_layers(inputs.shape[-1])
 
-        # 重塑状态
         h_hat = states.view(batch_dim, self.units, self.M)
         h = torch.sum(h_hat, dim=2)
 
-        # 检索
         fused_input = torch.cat([inputs, h], dim=-1)
         ln_tau_r = self.retrieval_layer(fused_input)
         ln_tau_r = ln_tau_r.view(batch_dim, self.units, self.M)
@@ -484,13 +485,11 @@ class CTGRU(nn.Module):
         sf_input_s = -torch.square(ln_tau_s - self.ln_tau_table_tensor)
         ski = F.softmax(sf_input_s, dim=2)
 
-        # 时间更新
         base_term = (1 - ski) * h_hat + ski * qk
         exp_term = torch.exp(-elapsed / self.tau_table_tensor)
         exp_term = exp_term.view(1, 1, self.M)
         h_hat_next = base_term * exp_term
 
-        # 计算新状态
         h_next = torch.sum(h_hat_next, dim=2)
         h_hat_next_flat = h_hat_next.view(batch_dim, self.units * self.M)
 
@@ -556,7 +555,7 @@ class BidirectionalRNN(nn.Module):
 
 
 class GRUD(nn.Module):
-    def __init__(self, units, input_dim=None, output_dim=3,device="cpu"):
+    def __init__(self, units, input_dim=None, output_dim=3, device="cpu"):
         super(GRUD, self).__init__()
         self.units = units
         self.device = torch.device(device)
@@ -573,7 +572,7 @@ class GRUD(nn.Module):
         self.update_gate = nn.Linear(fused_dim, self.units).to(self.device)
         self.d_gate = nn.Linear(1, self.units).to(self.device)  # elapsed time input
         self.init_state_proj = nn.Linear(self.output_dim, self.units).to(self.device)
-        
+
     def get_initial_state(self, batch_size, init_position):
         return self.init_state_proj(init_position)
 
@@ -611,14 +610,13 @@ class GRUD(nn.Module):
         reset_value = torch.cat([inputs, rt * h_hat], dim=-1)
         h_tilde = torch.tanh(self.detect_signal(reset_value))
 
-        # 计算新状态
         ht = zt * h_hat + (1.0 - zt) * h_tilde
 
         return ht, ht
 
 
 class PhasedLSTM(nn.Module):
-    def __init__(self, units, input_dim=None, output_dim =3,device="cpu"):
+    def __init__(self, units, input_dim=None, output_dim=3, device="cpu"):
         super(PhasedLSTM, self).__init__()
         self.units = units
         self.device = torch.device(device)
@@ -628,7 +626,6 @@ class PhasedLSTM(nn.Module):
         else:
             self.input_kernel = None
 
-        # 时间相关参数
         self.tau = nn.Parameter(torch.zeros(1, device=self.device))
         self.ron = nn.Parameter(torch.zeros(1, device=self.device))
         self.s = nn.Parameter(torch.zeros(1, device=self.device))
@@ -665,9 +662,7 @@ class PhasedLSTM(nn.Module):
         if self.input_kernel is None:
             self._build_weights(inputs.shape[-1])
 
-        # 泄漏常数
         alpha = 0.001
-        # 确保这些值为正
         tau = F.softplus(self.tau)
         s = F.softplus(self.s)
         ron = F.softplus(self.ron)
@@ -677,7 +672,6 @@ class PhasedLSTM(nn.Module):
 
         phit = torch.fmod(elapsed - s, tau) / tau
 
-        # 计算kt
         cond1 = phit < 0.5 * ron
         cond2 = phit < ron
 
@@ -702,7 +696,7 @@ class PhasedLSTM(nn.Module):
 
 
 class GRUODE(nn.Module):
-    def __init__(self, units, num_unfolds=4, input_dim=None,output_dim=3, device="cpu"):
+    def __init__(self, units, num_unfolds=4, input_dim=None, output_dim=3, device="cpu"):
         super(GRUODE, self).__init__()
         self.units = units
         self.num_unfolds = num_unfolds
@@ -736,7 +730,6 @@ class GRUODE(nn.Module):
         reset_value = torch.cat([inputs, rt * states], dim=-1)
         gt = torch.tanh(self.detect_signal(reset_value))
 
-        # 计算导数
         dhdt = (1.0 - zt) * (gt - states)
         return dhdt
 
@@ -770,27 +763,33 @@ class S4Layer(torch.nn.Module):
     """
     S4 Layer implementation based on Structured State Space Sequence model
     """
-    def __init__(self, state_dim, expand_dim, dt=0.1, device='cpu'):
+
+    def __init__(self, state_dim, expand_dim, dt=0.1, device="cpu"):
         super(S4Layer, self).__init__()
         self.state_dim = state_dim
         self.expand_dim = expand_dim
         self.dt = torch.tensor(dt, device=device)
         self.device = device
-        
-        # Parameters for diagonal state matrix Lambda
+
         self.Lambda_real = torch.nn.Parameter(torch.randn(self.state_dim, device=device))
         self.Lambda_imag = torch.nn.Parameter(torch.randn(self.state_dim, device=device))
-        
-        # Parameters for B and C matrices
-        self.B_real = torch.nn.Parameter(torch.randn(self.expand_dim, self.state_dim, device=device))
-        self.B_imag = torch.nn.Parameter(torch.randn(self.expand_dim, self.state_dim, device=device))
-        self.C_real = torch.nn.Parameter(torch.randn(self.expand_dim, self.state_dim, device=device))
-        self.C_imag = torch.nn.Parameter(torch.randn(self.expand_dim, self.state_dim, device=device))
-        
-        # Normalization parameters
+
+        self.B_real = torch.nn.Parameter(
+            torch.randn(self.expand_dim, self.state_dim, device=device)
+        )
+        self.B_imag = torch.nn.Parameter(
+            torch.randn(self.expand_dim, self.state_dim, device=device)
+        )
+        self.C_real = torch.nn.Parameter(
+            torch.randn(self.expand_dim, self.state_dim, device=device)
+        )
+        self.C_imag = torch.nn.Parameter(
+            torch.randn(self.expand_dim, self.state_dim, device=device)
+        )
+
         self.D = torch.nn.Parameter(torch.randn(self.expand_dim, device=device))
         self.log_scale = torch.nn.Parameter(torch.zeros(self.state_dim, device=device))
-        
+
     def forward(self, u, x0=None):
         """
         Forward pass of S4 layer
@@ -798,49 +797,41 @@ class S4Layer(torch.nn.Module):
         x0: initial state [batch_size, state_dim]
         """
         batch_size, seq_len, _ = u.shape
-        
-        # Construct Lambda matrix (diagonal)
+
         Lambda = -torch.exp(self.Lambda_real) + 1j * self.Lambda_imag
-        
-        # Construct B and C matrices
+
         B = self.B_real + 1j * self.B_imag
         C = self.C_real + 1j * self.C_imag
-        
-        # Apply scaling
+
         B = B * torch.exp(self.log_scale)[None, :]
         C = C * torch.exp(-self.log_scale)[None, :]
-        
-        # Discretize using bilinear transform
+
         I = torch.ones(self.state_dim, device=self.device)
         denom = I - (self.dt / 2) * Lambda
         A = (I + (self.dt / 2) * Lambda) / denom
         B_disc = (self.dt * B) / denom
-        
-        # Initialize hidden state
+
         if x0 is None:
             x = torch.zeros(batch_size, self.state_dim, dtype=torch.complex64, device=self.device)
         else:
             x = x0
-            
+
         outputs = []
         hidden_states = []
-        
+
         for i in range(seq_len):
-            # Update hidden state: x(t+1) = Ax(t) + Bu(t)
-            u_i = u[:, i, :]  # [batch_size, expand_dim]
-            # 修改: 将输入转换为复数类型以匹配B_disc的类型
+            u_i = u[:, i, :]
             u_i = u_i.to(dtype=torch.complex64)
             x = A * x + torch.matmul(u_i, B_disc)
-            
-            # Compute output: y(t) = Cx(t) + Du(t)
+
             y = torch.real(torch.matmul(x, C.t())) + torch.matmul(u_i.real, self.D)
-            
+
             outputs.append(y)
             hidden_states.append(x)
-            
-        outputs = torch.stack(outputs, dim=1)  # [batch_size, seq_len, expand_dim]
+
+        outputs = torch.stack(outputs, dim=1)
         final_state = x
-        
+
         return outputs, final_state
 
 
@@ -848,78 +839,65 @@ class S4Model(torch.nn.Module):
     """
     Complete S4 model with embedding and projection layers
     """
-    def __init__(self, input_dim, hidden_dim, output_dim=3 ,device='cpu'):
+
+    def __init__(self, input_dim, hidden_dim, output_dim=3, device="cpu"):
         super(S4Model, self).__init__()
         self.input_dim = input_dim
         self.hidden_dim = hidden_dim
-        self.state_dim =  hidden_dim
+        self.state_dim = hidden_dim
         self.device = device
         self.output_dim = output_dim
-        # Input embedding layer
         self.embedding = torch.nn.Linear(input_dim, hidden_dim).to(device)
-        
-        # S4 layer
+
         self.s4_layer = S4Layer(state_dim=self.state_dim, expand_dim=hidden_dim, device=device)
-        
-        # Output projection layer
+
         self.projection = torch.nn.Linear(hidden_dim, hidden_dim).to(device)
         self.activation = torch.nn.GELU()
-        
-        # Initial state projection
+
         self.init_state_proj = torch.nn.Linear(self.output_dim, self.state_dim).to(device)
-        
+
     def get_initial_state(self, batch_size, init_position):
-        # Return complex initial state
         real_part = self.init_state_proj(init_position)
         imag_part = torch.zeros_like(real_part)
         return torch.complex(real_part, imag_part)
-    
+
     def forward(self, inputs, states):
-        # inputs: [batch_size, input_dim]
-        # states: complex [batch_size, state_dim]
-        
         batch_size = inputs.shape[0]
-        
-        # Expand input to sequence (needed for S4)
-        inputs_expanded = inputs.unsqueeze(1)  # [batch_size, 1, input_dim]
-        
-        # Embed input
-        embedded = self.embedding(inputs_expanded)  # [batch_size, 1, hidden_dim]
-        
-        # Pass through S4 layer
+
+        inputs_expanded = inputs.unsqueeze(1)
+
+        embedded = self.embedding(inputs_expanded)
+
         outputs, new_state = self.s4_layer(embedded, states)
-        
-        # Project output
+
         output = self.projection(outputs[:, -1, :])  # Take last timestep
         output = self.activation(output)
-        
+
         return output, new_state
+
+
+S4 = S4Model
 
 
 class KKTFRNNs(nn.Module):
     """
     KKT Fractional-Order RNN Model based on the paper:
     "Multi-UUV Maneuvering Counter-Game for Dynamic Target Scenario Based on Fractional-Order Recurrent Neural Network"
-    
+
     Implementation of the fractional-order RNN model described in Section V of the paper.
     The model is constructed based on KKT optimality conditions for strategy optimization.
     """
-    
-    def __init__(self, units: int, gamma: float = 0.99, theta: float = 1.0, 
-                 input_dim: Optional[int] = None, output_dim: int = 3, 
-                 device: str = "cpu", dt: float = 0.01):
-        """
-        Initialize the KKT Fractional-Order RNN.
-        
-        Args:
-            units: Number of hidden units
-            gamma: Fractional order (0 < gamma <= 1 for stability)
-            theta: Convergence rate parameter  
-            input_dim: Input dimension (can be None for lazy initialization)
-            output_dim: Output dimension for initial state projection
-            device: Device to run the model on
-            dt: Time step for numerical integration
-        """
+
+    def __init__(
+        self,
+        units: int,
+        gamma: float = 0.99,
+        theta: float = 1.0,
+        input_dim: Optional[int] = None,
+        output_dim: int = 3,
+        device: str = "cpu",
+        dt: float = 0.01,
+    ):
         super(KKTFRNNs, self).__init__()
         self.units = units
         self.gamma = gamma
@@ -927,204 +905,121 @@ class KKTFRNNs(nn.Module):
         self.device = torch.device(device)
         self.output_dim = output_dim
         self.dt = dt
-        
-        # Validate fractional order
+
         if not (0 < gamma <= 2):
             raise ValueError("Fractional order gamma must be in (0, 2]")
         if gamma > 1:
             print(f"Warning: gamma={gamma} > 1 may cause instability. Recommend 0 < gamma <= 1")
-            
+
         if input_dim is not None:
             self._build_layers(input_dim)
         else:
             self.weight_matrix = None
             self.bias_vector = None
-    
+
     def _build_layers(self, input_dim: int):
-        """Build the network layers based on input dimension."""
-        # Total state dimension includes both beta and omega variables
-        total_dim = self.units * 2  # beta and omega components
-        
-        # Weight matrix G for KKT conditions
+        total_dim = self.units * 2
         self.weight_matrix = nn.Parameter(
             torch.randn(total_dim, total_dim, device=self.device) * 0.1
         )
-        
-        # Bias vector (lambda in KKT conditions)
-        self.bias_vector = nn.Parameter(
-            torch.randn(total_dim, device=self.device) * 0.1
-        )
-        
-        # Cost vector q
-        self.cost_vector = nn.Parameter(
-            torch.randn(total_dim, device=self.device) * 0.1
-        )
-        
-        # Initial state projection
+
+        self.bias_vector = nn.Parameter(torch.randn(total_dim, device=self.device) * 0.1)
+
+        self.cost_vector = nn.Parameter(torch.randn(total_dim, device=self.device) * 0.1)
+
         self.init_state_proj = nn.Linear(self.output_dim, total_dim).to(self.device)
-        
-        # Memory buffer for fractional derivative computation (will be resized during first use)
         self.memory_states = None
-        self.register_buffer('memory_index', torch.tensor(0, device=self.device))
+        self.register_buffer("memory_index", torch.tensor(0, device=self.device))
         self.memory_size = 100
-        
+
     def get_initial_state(self, batch_size: int, init_position: torch.Tensor) -> torch.Tensor:
         """Get initial state for the RNN."""
         if self.weight_matrix is None:
-            # Lazy initialization based on first call
             self._build_layers(init_position.shape[-1])
-        
+
         return self.init_state_proj(init_position)
-    
+
     def _compute_rho(self, z: torch.Tensor) -> torch.Tensor:
-        """
-        Compute the ρ(z) function as defined in equation (28) of the paper:
-        ρ(z) = [−q − G^T(ω + Gβ − λ)+; (ω + Gβ − λ)+ − ω]+
-        
-        Args:
-            z: State vector [β, ω]
-            
-        Returns:
-            ρ(z) value
-        """
         batch_size = z.shape[0]
         mid_dim = z.shape[1] // 2
-        
-        # Split z into beta and omega
+
         beta = z[:, :mid_dim]  # First half
         omega = z[:, mid_dim:]  # Second half
-        
-        # Compute Gβ
+
         G_beta = torch.matmul(beta, self.weight_matrix[:mid_dim, :mid_dim])
-        
-        # Compute ω + Gβ − λ
         constraint_term = omega + G_beta - self.bias_vector[:mid_dim]
-        
-        # Apply positive part operation (·)+
         constraint_pos = F.relu(constraint_term)
-        
-        # Compute G^T(ω + Gβ − λ)+
+
         GT_constraint_pos = torch.matmul(constraint_pos, self.weight_matrix[:mid_dim, :mid_dim].T)
-        
-        # First component: −q − G^T(ω + Gβ − λ)+
         rho_beta = -self.cost_vector[:mid_dim] - GT_constraint_pos
-        
-        # Second component: (ω + Gβ − λ)+ − ω
         rho_omega = constraint_pos - omega
-        
-        # Combine components
+
         rho = torch.cat([rho_beta, rho_omega], dim=1)
-        
+
         return rho
-    
-    def forward(self, inputs: torch.Tensor, states: torch.Tensor, 
-                elapsed: float = 1.0) -> Tuple[torch.Tensor, torch.Tensor]:
-        """
-        Forward pass of the KKT Fractional-Order RNN.
-        
-        Args:
-            inputs: Input tensor
-            states: Previous states [β, ω]
-            elapsed: Elapsed time (for compatibility)
-            
-        Returns:
-            Tuple of (output, new_states)
-        """
+
+    def forward(
+        self, inputs: torch.Tensor, states: torch.Tensor, elapsed: float = 1.0
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         if isinstance(inputs, (tuple, list)):
             if len(inputs) > 1:
                 elapsed = inputs[1]
                 inputs = inputs[0]
             else:
                 inputs = inputs[0]
-        
+
         inputs = inputs.to(self.device)
         states = states.to(self.device)
-        
+
         if self.weight_matrix is None:
             self._build_layers(inputs.shape[-1])
-        
+
         batch_size = states.shape[0]
-        
-        # Initialize or update memory buffer
+
         if self.memory_states is None:
-            # Initialize memory buffer with correct batch dimension
             self.memory_states = torch.zeros(self.memory_size, *states.shape, device=self.device)
-        
-        # Update memory buffer
+
         current_idx = self.memory_index.item() % self.memory_states.shape[0]
         self.memory_states[current_idx] = states.detach()
         self.memory_index += 1
-        
-        # Compute ρ(z)
+
         rho_z = self._compute_rho(states)
-        
-        # Compute fractional derivative (simplified Euler method)
-        # C_t0 D^γ_t z(t) = θρ(z(t))
         fractional_deriv = self.theta * rho_z
-        
-        # Update states using numerical integration
-        # z(t+dt) = z(t) + dt^γ * fractional_deriv / Γ(γ+1)
+
         gamma_factor = torch.exp(torch.lgamma(torch.tensor(self.gamma + 1.0)))
-        dt_gamma = self.dt ** self.gamma
-        
+        dt_gamma = self.dt**self.gamma
         new_states = states + (dt_gamma / gamma_factor) * fractional_deriv
-        
-        # Extract output (first half of states representing β)
         mid_dim = new_states.shape[1] // 2
         output = new_states[:, :mid_dim]
-        
+
         return output, new_states
-    
-    def solve_optimization(self, max_iterations: int = 1000, 
-                          tolerance: float = 1e-5) -> torch.Tensor:
-        """
-        Solve the optimization problem by finding the equilibrium point.
-        
-        Args:
-            max_iterations: Maximum number of iterations
-            tolerance: Convergence tolerance
-            
-        Returns:
-            Equilibrium state (optimal solution)
-        """
-        # Initialize random state
+
+    def solve_optimization(
+        self, max_iterations: int = 1000, tolerance: float = 1e-5
+    ) -> torch.Tensor:
         batch_size = 1
         total_dim = self.units * 2
         z = torch.randn(batch_size, total_dim, device=self.device) * 0.1
-        
+
         for iteration in range(max_iterations):
-            # Compute ρ(z)
             rho_z = self._compute_rho(z)
-            
-            # Check convergence
+
             if torch.norm(rho_z) < tolerance:
                 print(f"Converged after {iteration} iterations")
                 break
-            
-            # Update using gradient descent-like method
+
             z = z - 0.01 * rho_z
-            
+
         return z
-    
-    def get_mixed_strategies(self, equilibrium_state: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-        """
-        Extract mixed strategies from equilibrium state.
-        
-        Args:
-            equilibrium_state: Equilibrium state from optimization
-            
-        Returns:
-            Tuple of (strategy_w, strategy_e) - mixed strategies for both players
-        """
+
+    def get_mixed_strategies(
+        self, equilibrium_state: torch.Tensor
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         mid_dim = equilibrium_state.shape[1] // 2
         beta = equilibrium_state[:, :mid_dim]
-        
+
         # Apply softmax to ensure probability constraints
-        strategy_w = F.softmax(beta[:, :mid_dim//2], dim=1)
-        strategy_e = F.softmax(beta[:, mid_dim//2:], dim=1)
-        
+        strategy_w = F.softmax(beta[:, : mid_dim // 2], dim=1)
+        strategy_e = F.softmax(beta[:, mid_dim // 2 :], dim=1)
+
         return strategy_w, strategy_e
-
-
-# Register S4 model
-S4 = S4Model

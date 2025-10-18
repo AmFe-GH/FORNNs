@@ -2,7 +2,7 @@
 from torchkeras import VLog
 import timeit
 import numpy as np
-import Hyperparameters
+import FORNNs_hyperparameters
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from utils import sche_lr, draw3d, fols_Fun, detect_exceptions, generate_bits
@@ -11,7 +11,7 @@ import torch.optim as optim
 import torch
 from utils import draw3d_train_test
 import os
-from Hyperparameters import *
+from FORNNs_hyperparameters import *
 import utils
 # torch.autograd.set_detect_anomaly(True)
 Simulation_system = "XOR"

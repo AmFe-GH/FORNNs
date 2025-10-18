@@ -1,5 +1,5 @@
 
-from Hyperparameters import *
+from FORNNs_hyperparameters import *
 import os
 from utils import draw3d_train_test
 import torch
