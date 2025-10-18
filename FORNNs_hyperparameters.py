@@ -1,24 +1,22 @@
 import torch
-
-
 def set_Hyperparameters(Simulation_system):
 
     if Simulation_system == 'Lorenz':
-        N_of_func_right = 1000
+        N_of_func_right = 140
         n_of_func_right = 3
         dtype = torch.float32
         device = torch.device('cuda:0')
         N_step = 500
         test_step = 100
         alpha = 0.996
-        beta = 0.9
-        epoch_number = 20
+        beta = 0.4
+        epoch_number = 50
         width_step = 0.01
         x0 = torch.tensor([-8., 7, 27], dtype=dtype, device=device)
-        random_seed = 490
+        random_seed = 491
         lr = 1e-4
         LDN_lr = 4e-3
-        epochs_LND = 100000
+        epochs_LND = 200
     elif Simulation_system == 'Chua':
         N_of_func_right = 5
         n_of_func_right = 3
@@ -39,7 +37,7 @@ def set_Hyperparameters(Simulation_system):
     elif Simulation_system == 'XOR':
         N_of_func_right = 2
         n_of_func_right = 1
-        dtype = torch.float32
+        dtype = torch.float16
         device = torch.device('cuda:0')
         N_step = 10
         test_step = None

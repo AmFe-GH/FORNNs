@@ -66,52 +66,19 @@ and also confirm the effectiveness of LDN method.
   ABM solver on FORNNs' performance is first revealed,
   which are referred to as 'Parameter Domain Problems'(PDPs) and Hallucination Problem.
 
-## Performance Comparison
-
-<p align="center">
-<img src="./Manuscript/Figure/Table_compare1.PNG"/> 
-<img src="./Manuscript/Figure/Table_compare2.PNG"/>
-</p>
-
-## Interpretability
-
-<p align="center">
-<img src="./Manuscript/Figure/hotmap.PNG"/>
-</p>
-
-In terms of the model structures,
-The MLP mentioned here consists of a single hidden
-layer with five neurons. Other temporal models
-referenced in this context retain their original
-structures as described in the corresponding papers,
-with only a reduction in the number of parameters.
-
-In terms of the ability to fit dynamic systems,
-FORNNs have demonstrated superior performance compared
-to other proposed models, achieving convergence with
-fewer training iterations. Additionally, the performance
-observed from $FORNNs-L$ to $FORNNs-XL$
-indicates that a larger number of parameters significantly
-enhances the model's learning capacity, leading to a marked
-decrease in $\epsilon$. However, this also
-increases the number of training epochs required for
-convergence. This phenomenon suggests that $N$ should be flexibly
-chosen to balance learning capacity and convergence speed.
 
 ## Files
 
-- `main.py`: This is the main file. Running this file can fully demonstrate the generation and processing of training data, as well as the learning process and results of FORNNs.
-- `Hyperparameters.py`: Contains preset parameter information used in the experiments.
-- `LDN.py`: Implements the Local Domain Normalization method described in the paper. Note that this module has been integrated into main.py. Normally, you do not need to run this file manually.
-- `model.py`: Includes model architectures and loss functions used in the experiments.
+- `FORNNs_run.py`: Running this file can fully demonstrate the learning process and results of FORNNs.
+- `FORNNs_hyperparameters.py`: Contains preset parameter information used in `FORNNs_run.py`.
+- `base_model_run.py`: Contains the implementation of various baseline models used for comparison in the experiments.
+- `base_model_hyperparameters.yaml`: Contains hyperparameter settings for the baseline models in `base_model_run.py`.
+- `model.py`: Includes model architectures and loss functions used in the work.
 - `utils.py`: Contains utility functions used in the main file.
-- `Plot3D.py`: A utility class for plotting 3D figures.`
 - `./Figure`: Records the pictures drawn during program operation
 - `./Manuscript`: Some images from the paper are saved to help readers on GitHub better understand our project
--
-
-## Instructions
-
+- `./lib` : Contains implementations for `RNNDecay` and `ODERNN`(based source code: https://github.com/YuliaRubanova/latent_ode/tree/c0682d4f52b806fb88d965755892eadd9783f936/lib; Source Paper: https://arxiv.org/abs/1907.03907)
+## Quick Start
 To replicate the results:
 
 1. Clone this repository to your local machine:  
@@ -120,7 +87,7 @@ To replicate the results:
    `conda activate <your_env_name>`
 3. Install the required packages:  
    `pip install -r requirements.txt`
-4. Run `main.py`.
+4. Run `python FORNNs_run.py`.
 
 ## Citation
 

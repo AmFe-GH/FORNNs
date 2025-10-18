@@ -1,5 +1,5 @@
-from Hyperparameters import *
-from Hyperparameters import N_step, test_step
+from FORNNs_hyperparameters import *
+from FORNNs_hyperparameters import N_step, test_step
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
